@@ -21,7 +21,8 @@ namespace JoshsItems
             // Init our logging class so that we can properly log for debugging
             Log.Init(Logger);
 
-            JoshsEquipment.Init();
+            //JoshsEquipment.Init();
+            JoshsDrones.Init();
 
             Logger.LogMessage("All items initialized");
         }
@@ -41,7 +42,10 @@ namespace JoshsItems
             {
                 JoshsEquipment.Debug("F4");
             }
-
+            if (Input.GetKeyDown(KeyCode.F5))
+            {
+                JoshsDrones.Debug("F5");
+            }
         }
 #endif
     }
