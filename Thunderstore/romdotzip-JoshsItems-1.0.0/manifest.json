@@ -1,0 +1,11 @@
+{
+  "name": "JoshsItems",
+  "description": "A mod with mostly new items, but some planned QOL changes. Inspired by the riskiest of rainers. Currently has 1 new equipment.",
+  "version_number": "1.0.0",
+  "dependencies": [
+    "bbepis-BepInExPack-5.4.2117",
+    "RiskofThunder-HookGenPatcher-1.2.7",
+    "RiskofThunder-R2API_Language-1.0.1"
+  ],
+  "website_url": "https://github.com/romdotzip"
+}
