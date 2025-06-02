@@ -7,6 +7,10 @@ This is going to be a set of custom items made for Risk of Rain 2, as well as so
    - Description: Restores 1 broken Delicate Watch on use. After 6 uses, the equipment cooldown increases by 30%.
    - \+ Fully functional
    - \- Prefab doesn't display in the logbook yet
+- <ins>**Josh’s Drones**</ins>
+   - Not an item, but makes drones work way better
+   - Better drone AI. Drones attack the enemy you ping, or go to the place you ping
+   - \- Does not do anything yet
 
 ## Future work
 - <ins>**Josh’s Laptop**</ins> (green item) 
@@ -17,9 +21,7 @@ This is going to be a set of custom items made for Risk of Rain 2, as well as so
    - Using a 3D printer gives you some sort of buff
 - <ins>**Josh’s Hawk 2UH**</ins> 
    - I just like this name hehe
-- <ins>**Josh’s Drones**</ins>
-   - Not an item, but makes drones work way better
-- Better drone AI. Drones attack the enemy you ping, or go to the place you ping
+
 
 # Changelog
 **1.0.0**
