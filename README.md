@@ -10,7 +10,8 @@ This is going to be a set of custom items made for Risk of Rain 2, as well as so
 - <ins>**Josh’s Drones**</ins>
    - Not an item, but makes drones work way better
    - Better drone AI. Drones attack the enemy you ping, or go to the place you ping
-   - \- Does not do anything yet
+   - \+ Can spawn a drone for debugging
+   - \- Not sure if changing the max distance for drones worked, or does anything yet
 
 ## Future work
 - <ins>**Josh’s Laptop**</ins> (green item) 
