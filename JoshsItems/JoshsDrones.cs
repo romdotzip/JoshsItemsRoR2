@@ -14,7 +14,6 @@ namespace JoshsItems
     internal static class JoshsDrones
     {
         private static float droneMaxDistance;
-        private static List<AISkillDriver> otherDrivers;
         private static AISkillDriver attackDriver;
 
         public static void Init()
@@ -24,96 +23,16 @@ namespace JoshsItems
 
             // Set variables
             droneMaxDistance = 300;
-            otherDrivers = new();
         }
 
         private static void OverrideDroneBehavior()
         {
             // Call necessary hooks
-            Hooks1();
+            Hooks();
         }
-        private static void Hooks1()
+
+        private static void Hooks()
         {
-            // Whenever a drone is spawned, add the driver to it
-            
-            On.RoR2.CharacterMaster.OnBodyStart += (orig, self, body) =>
-            {
-                orig(self, body);
-
-                // No null reference errors today
-                if (!self || !self.gameObject || !body)
-                    return;
-
-                Log.Debug("ERROORRRRRR");
-
-                if (self.teamIndex == TeamIndex.Player && body.bodyFlags.HasFlag(CharacterBody.BodyFlags.Mechanical))
-                {
-                    AddAttackDriver(self.gameObject);
-                }
-            };
-
-            // Taken from BetterDrones teehee
-            // Each drone runs this code when an enemy is pinged
-            On.RoR2.CharacterAI.BaseAI.UpdateTargets += (orig, self) =>
-            {
-                orig(self);
-
-                if (NetworkServer.active)
-                {
-                    if (self.master && self.master.minionOwnership && self.body.bodyFlags.HasFlag(CharacterBody.BodyFlags.Mechanical))
-                    {
-                        if (self.master.minionOwnership.ownerMaster)
-                        {
-                            CharacterMaster owner = self.master.minionOwnership.ownerMaster;
-                            if (owner.playerCharacterMasterController && owner.playerCharacterMasterController.pingerController)
-                            {
-                                PingerController controller = owner.playerCharacterMasterController.pingerController;
-                                if (controller.currentPing.active && controller.currentPing.targetGameObject)
-                                {
-                                    if (controller.currentPing.targetGameObject.GetComponent<CharacterBody>() && controller.currentPing.targetGameObject.GetComponent<CharacterBody>().teamComponent.teamIndex != TeamIndex.Player)
-                                    {
-                                        // Set current enemy
-                                        self.currentEnemy.gameObject = controller.currentPing.targetGameObject;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            };
-        }
-
-        private static void AddAttackDriver(GameObject droneObject)
-        { 
-                attackDriver = droneObject.AddComponent<AISkillDriver>();
-                attackDriver = new AISkillDriver();
-                attackDriver.customName = "AttackPingedEnemy";
-                attackDriver.skillSlot = SkillSlot.Primary;
-                attackDriver.requireSkillReady = false;
-                attackDriver.maxDistance = 300f;
-                attackDriver.minDistance = 0f;
-                attackDriver.movementType = AISkillDriver.MovementType.StrafeMovetarget;
-                attackDriver.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
-                attackDriver.aimType = AISkillDriver.AimType.AtCurrentEnemy;
-                attackDriver.buttonPressType = AISkillDriver.ButtonPressType.Hold;
-
-                Log.Debug("Added attack driver to drone");
-        }
-
-        private static void Hooks2()
-        {
-
-            // ----------------------------------
-            // ----------------------------------
-            // ----------------------------------
-            // ----------------------------------
-            // CREATE CUSTOM AI SKILL DRIVER AND SET THE CURRENT TARGET FOR EACH DRONE WHEN AN ENEMY IS PINGED, THAT WAY WE CAN SET MAX DISTANCE FOR JUST ONE SKILL DRIVER
-            // THEN ONCE THE PINGED ENEMY DIES, CHANGE THE CURRENT AI SKILL DRIVER BACK TO DEFAULT
-            // ----------------------------------
-            // ----------------------------------
-            // ----------------------------------
-            // ----------------------------------
-
             // Taken from BetterDrones teehee
             On.RoR2.CharacterAI.BaseAI.UpdateTargets += (orig, self) =>
             {
@@ -177,14 +96,86 @@ namespace JoshsItems
             };
         }
 
+
+        // Currently not used
+        private static void Hooks1()
+        {
+            // Whenever a drone is spawned, add the driver to it
+            
+            On.RoR2.CharacterMaster.OnBodyStart += (orig, self, body) =>
+            {
+                orig(self, body);
+
+                // No null reference errors today
+                if (!self || !self.gameObject || !body)
+                    return;
+
+                if (self.teamIndex == TeamIndex.Player && body.bodyFlags.HasFlag(CharacterBody.BodyFlags.Mechanical))
+                {
+                    AddAttackDriver(self.gameObject);
+                }
+            };
+
+            // Taken from BetterDrones teehee
+            // Each drone runs this code when an enemy is pinged
+            On.RoR2.CharacterAI.BaseAI.UpdateTargets += (orig, self) =>
+            {
+                orig(self);
+
+                if (NetworkServer.active)
+                {
+                    if (self.master && self.master.minionOwnership && self.body.bodyFlags.HasFlag(CharacterBody.BodyFlags.Mechanical))
+                    {
+                        if (self.master.minionOwnership.ownerMaster)
+                        {
+                            CharacterMaster owner = self.master.minionOwnership.ownerMaster;
+                            if (owner.playerCharacterMasterController && owner.playerCharacterMasterController.pingerController)
+                            {
+                                PingerController controller = owner.playerCharacterMasterController.pingerController;
+                                if (controller.currentPing.active && controller.currentPing.targetGameObject)
+                                {
+                                    if (controller.currentPing.targetGameObject.GetComponent<CharacterBody>() && controller.currentPing.targetGameObject.GetComponent<CharacterBody>().teamComponent.teamIndex != TeamIndex.Player)
+                                    {
+                                        // Set current enemy
+                                        self.currentEnemy.gameObject = controller.currentPing.targetGameObject;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+        }
+        // Currently not used
+        private static void AddAttackDriver(GameObject droneObject)
+        {
+            attackDriver = droneObject.AddComponent<AISkillDriver>();
+            attackDriver = new AISkillDriver();
+            attackDriver.customName = "AttackPingedEnemy";
+            attackDriver.skillSlot = SkillSlot.None;
+            attackDriver.requireSkillReady = false;
+            attackDriver.maxDistance = 3000f;
+            attackDriver.minDistance = 0f;
+            attackDriver.movementType = AISkillDriver.MovementType.ChaseMoveTarget;
+            attackDriver.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
+            attackDriver.aimType = AISkillDriver.AimType.AtCurrentEnemy;
+            attackDriver.buttonPressType = AISkillDriver.ButtonPressType.Hold;
+            attackDriver.ignoreNodeGraph = false;
+
+            Log.Debug("Added attack driver to drone");
+        }
+
         public static void DebugSpawnCharacter(GameObject characterMasterPrefab, Vector3 position, Quaternion rotation, GameObject summonerBody)
         {
-            if (characterMasterPrefab == Resources.Load<GameObject>("prefabs/characterMasters/Drone1Master"))
+            if (characterMasterPrefab == LegacyResourcesAPI.Load<GameObject>("prefabs/characterMasters/Drone1Master"))
             {
                 // Have to spawn the drone interactable, cause spawning the drone directly messes up the AI and I dont know how to fix it rn
                 // Give player money so they can buy the drone
                 PlayerCharacterMasterController.instances[0].master.GiveMoney(1000);
-                InteractableSpawnCard isc = Object.Instantiate(Resources.Load<InteractableSpawnCard>("SpawnCards/InteractableSpawnCard/iscBrokenDrone1"));
+
+                characterMasterPrefab.GetComponent<SpawnCard>();
+
+                InteractableSpawnCard isc = Object.Instantiate(LegacyResourcesAPI.Load<InteractableSpawnCard>("SpawnCards/InteractableSpawnCard/iscBrokenDrone1"));
 
                 DirectorPlacementRule placementRule = new DirectorPlacementRule();
                 placementRule.placementMode = DirectorPlacementRule.PlacementMode.Direct;
@@ -203,7 +194,7 @@ namespace JoshsItems
                     Log.Debug("Spawned drone interactable");
                 }
             }
-            else if (characterMasterPrefab == Resources.Load<GameObject>("prefabs/characterMasters/GreaterWispMaster"))
+            else if (characterMasterPrefab == LegacyResourcesAPI.Load<GameObject>("prefabs/characterMasters/GreaterWispMaster"))
             {
                 MasterSummon summon = new MasterSummon();
                 summon.masterPrefab = characterMasterPrefab;
@@ -237,7 +228,7 @@ namespace JoshsItems
                 Log.Debug($"Player pressed F5.");
 
                 var transform = PlayerCharacterMasterController.instances[0].master.GetBodyObject().transform;
-                GameObject droneMasterPrefab = Resources.Load<GameObject>("prefabs/characterMasters/Drone1Master");
+                GameObject droneMasterPrefab = LegacyResourcesAPI.Load<GameObject>("prefabs/characterMasters/Drone1Master");
 
                 DebugSpawnCharacter(droneMasterPrefab, transform.position + new Vector3(0f, 3f, 0f), transform.rotation, PlayerCharacterMasterController.instances[0].master.gameObject);
             }
@@ -247,7 +238,7 @@ namespace JoshsItems
                 Log.Debug($"Player pressed F6.");
 
                 var transform = PlayerCharacterMasterController.instances[0].master.GetBodyObject().transform;
-                GameObject wispMasterPrefab = Resources.Load<GameObject>("prefabs/characterMasters/GreaterWispMaster");
+                GameObject wispMasterPrefab = LegacyResourcesAPI.Load<GameObject>("prefabs/characterMasters/GreaterWispMaster");
                 Camera playerCam = CameraRigController.readOnlyInstancesList[0].sceneCam;
 
                 DebugSpawnCharacter(wispMasterPrefab, transform.position + playerCam.transform.forward * 100, transform.rotation, PlayerCharacterMasterController.instances[0].master.gameObject);
