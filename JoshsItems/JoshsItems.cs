@@ -46,6 +46,10 @@ namespace JoshsItems
             {
                 JoshsDrones.Debug("F5");
             }
+            if (Input.GetKeyDown(KeyCode.F6))
+            {
+                JoshsDrones.Debug("F6");
+            }
         }
 #endif
     }
